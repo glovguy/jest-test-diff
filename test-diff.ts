@@ -1,12 +1,11 @@
 declare var require: any
-const ts = require("typescript")
-
-
+const ts = require("typescript");
+const fs = require("fs");
 
 // Parse the code.
 let tsSourceFile = ts.createSourceFile(
   'test-diff.js',
-  sourceCode,
+  fs.readFileSync('test-component.spec.ts', 'utf8'),
   ts.ScriptTarget.Latest
 );
 

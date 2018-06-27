@@ -1,0 +1,27 @@
+{
+  "name": "jest-test-diff",
+  "version": "0.1.0",
+  "description": "Jest test descriptions for a git diff",
+  "main": "test-diff.js",
+  "dependencies": {
+    "fs": "0.0.1-security",
+    "typescript": "^2.9.2"
+  },
+  "devDependencies": {
+    "@types/core-js": "^2.5.0"
+  },
+  "scripts": {
+    "start": "tsc test-diff.ts && node test-diff.js",
+    "test": "tsc test-diff.ts && node test-diff.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/glovguy/jest-test-diff.git"
+  },
+  "author": "glovguy",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/glovguy/jest-test-diff/issues"
+  },
+  "homepage": "https://karl.pizza"
+}
