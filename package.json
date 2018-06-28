@@ -5,6 +5,7 @@
   "main": "test-diff.js",
   "dependencies": {
     "fs": "0.0.1-security",
+    "simple-git": "^1.96.0",
     "typescript": "^2.9.2"
   },
   "devDependencies": {
@@ -12,7 +13,7 @@
   },
   "scripts": {
     "start": "tsc test-diff.ts && node test-diff.js",
-    "test": "tsc test-diff.ts && node test-diff.js"
+    "test": "tsc spec.ts && node spec.js"
   },
   "repository": {
     "type": "git",
