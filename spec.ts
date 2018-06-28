@@ -1,7 +1,5 @@
-import { linesFromGitDiff, printAllDescribesFromSourceFile, lineStart, lineEnd } from './test-diff';
-declare var require: any
-export const ts = require("typescript");
-export const fs = require("fs");
+import { linesFromGitDiff, printAllDescribesFromSpecFile, lineStartFromNode, lineEndFromNode } from './test-diff';
+
 
 // poor man's tests
 const testSourceCode = `import { some } from 'thing';
@@ -15,17 +13,13 @@ describe('my describe text', () => {
   });
 });
 `;
-const testTsSourceFile = ts.createSourceFile(
-  'test-diff.js',
-  testSourceCode,
-  ts.ScriptTarget.Latest
-);
+
 console.assert(
-    printAllDescribesFromSourceFile(testTsSourceFile)['tree'][0]['text'] == 'my describe text',
+    printAllDescribesFromSpecFile(testSourceCode)['tree'][0]['text'] == 'my describe text',
     'First level parse tree'
 );
 console.assert(
-    printAllDescribesFromSourceFile(testTsSourceFile)['tree'][1]['text'] == 'this is a nested desc block',
+    printAllDescribesFromSpecFile(testSourceCode)['tree'][1]['text'] == 'this is a nested desc block',
     'Second level parse tree'
 );
 const expectedDoc = `my describe text
@@ -33,25 +27,33 @@ const expectedDoc = `my describe text
     it does a thing
 `;
 console.assert(
-    printAllDescribesFromSourceFile(testTsSourceFile)['doc'] == expectedDoc,
+    printAllDescribesFromSpecFile(testSourceCode)['doc'] == expectedDoc,
     'Formatted doc'
+);
+console.assert(
+    printAllDescribesFromSpecFile(testSourceCode)['tree'][0]['lineStart'] == 3,
+    'Line start included'
+);
+console.assert(
+    printAllDescribesFromSpecFile(testSourceCode)['tree'][0]['lineEnd'] == 10,
+    'Line end included'
 );
 
 
 console.assert(
-    lineStart(testSourceCode, printAllDescribesFromSourceFile(testTsSourceFile)['tree'][0]) == 3,
+    lineStartFromNode(testSourceCode, printAllDescribesFromSpecFile(testSourceCode)['tree'][0]) == 3,
     'Line start function'
 );
 console.assert(
-    lineEnd(testSourceCode, printAllDescribesFromSourceFile(testTsSourceFile)['tree'][0]) == 10,
+    lineEndFromNode(testSourceCode, printAllDescribesFromSpecFile(testSourceCode)['tree'][0]) == 10,
     'Line end function'
 );
 console.assert(
-    lineStart(testSourceCode, printAllDescribesFromSourceFile(testTsSourceFile)['tree'][1]) == 5,
+    lineStartFromNode(testSourceCode, printAllDescribesFromSpecFile(testSourceCode)['tree'][1]) == 5,
     'Line Start function, nested describe'
 );
 console.assert(
-    lineEnd(testSourceCode, printAllDescribesFromSourceFile(testTsSourceFile)['tree'][1]) == 9,
+    lineEndFromNode(testSourceCode, printAllDescribesFromSpecFile(testSourceCode)['tree'][1]) == 9,
     'Line end function, nested describe'
 );
 
