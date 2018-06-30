@@ -1,24 +1,5 @@
 declare var require: any
 const ts = require("typescript");
-const fs = require("fs");
-const simpleGit = require('simple-git')();
-
-
-export const linesFromGitDiff = function(err, diffText) {
-    const lines = diffText.split('\n');
-    let lineNums = [];
-    lines.forEach((line) => {
-        const match = new RegExp(/.*@@ -\d+,\d+ \+(\d+),?(\d+)? @@.*/g).exec(line);
-        if (match) {
-            const endOfLine = match[2] ? Number(match[1])+Number(match[2])-1 : Number(match[1]);
-            lineNums.push([Number(match[1]), endOfLine]); }
-    });
-    return lineNums;
-}
-
-simpleGit.diff(['-U0'], linesFromGitDiff);
-
-const specFile = fs.readFileSync('faculty-landing-item-view.component.spec.ts', 'utf8');
 
 export let lineStartFromNode = function(file, descNode) {
     return (file.slice(0, descNode['pos']+1).split('\n') || []).length + 1;
@@ -79,6 +60,8 @@ export function printAllDescribesFromSpecFile(specFile) {
     });
     return context;
 }
+
+
 
 //const nodeCon = printAllDescribesFromSourceFile(tsSourceFile)['tree'][47];
 //console.log(

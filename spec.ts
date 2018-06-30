@@ -1,4 +1,5 @@
-import { linesFromGitDiff, printAllDescribesFromSpecFile, lineStartFromNode, lineEndFromNode } from './test-diff';
+import { printAllDescribesFromSpecFile, lineStartFromNode, lineEndFromNode } from './src/jest-info';
+import { linesFromGitDiff, specFilesChanged } from './src/git-diff';
 
 
 // poor man's tests
@@ -15,46 +16,46 @@ describe('my describe text', () => {
 `;
 
 console.assert(
-    printAllDescribesFromSpecFile(testSourceCode)['tree'][0]['text'] == 'my describe text',
-    'First level parse tree'
+  printAllDescribesFromSpecFile(testSourceCode)['tree'][0]['text'] == 'my describe text',
+  'First level parse tree'
 );
 console.assert(
-    printAllDescribesFromSpecFile(testSourceCode)['tree'][1]['text'] == 'this is a nested desc block',
-    'Second level parse tree'
+  printAllDescribesFromSpecFile(testSourceCode)['tree'][1]['text'] == 'this is a nested desc block',
+  'Second level parse tree'
 );
 const expectedDoc = `my describe text
   this is a nested desc block
     it does a thing
 `;
 console.assert(
-    printAllDescribesFromSpecFile(testSourceCode)['doc'] == expectedDoc,
-    'Formatted doc'
+  printAllDescribesFromSpecFile(testSourceCode)['doc'] == expectedDoc,
+  'Formatted doc'
 );
 console.assert(
-    printAllDescribesFromSpecFile(testSourceCode)['tree'][0]['lineStart'] == 3,
-    'Line start included'
+  printAllDescribesFromSpecFile(testSourceCode)['tree'][0]['lineStart'] == 3,
+  'Line start included'
 );
 console.assert(
-    printAllDescribesFromSpecFile(testSourceCode)['tree'][0]['lineEnd'] == 10,
-    'Line end included'
+  printAllDescribesFromSpecFile(testSourceCode)['tree'][0]['lineEnd'] == 10,
+  'Line end included'
 );
 
 
 console.assert(
-    lineStartFromNode(testSourceCode, printAllDescribesFromSpecFile(testSourceCode)['tree'][0]) == 3,
-    'Line start function'
+  lineStartFromNode(testSourceCode, printAllDescribesFromSpecFile(testSourceCode)['tree'][0]) == 3,
+  'Line start function'
 );
 console.assert(
-    lineEndFromNode(testSourceCode, printAllDescribesFromSpecFile(testSourceCode)['tree'][0]) == 10,
-    'Line end function'
+  lineEndFromNode(testSourceCode, printAllDescribesFromSpecFile(testSourceCode)['tree'][0]) == 10,
+  'Line end function'
 );
 console.assert(
-    lineStartFromNode(testSourceCode, printAllDescribesFromSpecFile(testSourceCode)['tree'][1]) == 5,
-    'Line Start function, nested describe'
+  lineStartFromNode(testSourceCode, printAllDescribesFromSpecFile(testSourceCode)['tree'][1]) == 5,
+  'Line Start function, nested describe'
 );
 console.assert(
-    lineEndFromNode(testSourceCode, printAllDescribesFromSpecFile(testSourceCode)['tree'][1]) == 9,
-    'Line end function, nested describe'
+  lineEndFromNode(testSourceCode, printAllDescribesFromSpecFile(testSourceCode)['tree'][1]) == 9,
+  'Line end function, nested describe'
 );
 
 const testDiffOutput = `diff --git a/spec.ts b/spec.ts
@@ -93,6 +94,11 @@ console.assert(
     lineNums[0][1] == 23 &&
     lineNums[1][0] == 5 &&
     lineNums[1][1] == 22,
-  'linesFromGitDiff'
+  'linesFromGitDiff function'
+);
+const filenames = specFilesChanged(null, testDiffOutput);
+console.assert(
+  filenames[0] == 'spec.ts' && filenames.length == 1,
+  'specFilesChanged function'
 );
 console.log('All tests pass!');
