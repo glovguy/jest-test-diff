@@ -60,17 +60,3 @@ export function printAllDescribesFromSpecFile(specFile) {
     });
     return context;
 }
-
-
-
-//const nodeCon = printAllDescribesFromSourceFile(tsSourceFile)['tree'][47];
-//console.log(
-//    nodeCon['text'],
-//    lineStartFromNode(tsSourceFile, nodeCon),
-//    lineEndFromNode(tsSourceFile, nodeCon)
-//);
-
-
-
-// tsSourceFile.statements[0].expression.expression.kind == 71
-//   && tsSourceFile.statements[0].expression.expression.escapedText == 'describe'

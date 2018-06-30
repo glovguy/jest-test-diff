@@ -62,6 +62,19 @@ const testDiffOutput = `diff --git a/spec.ts b/spec.ts
 index 2a8e06b..2ab1d1a 100644
 --- a/spec.ts
 +++ b/spec.ts
+@@ -12 +12,11 @@ export const specFilesChanged = function(err, diffText) {
+-export const linesFromGitDiff = function(err, diffText) {
++//@@ -2 +2,2 @@ don't include this since it is part of the file itself
++export const linesFromGitDiff = function(err, diffText, fileName) {
++    const fileDiffs = diffText.split('diff --git a/');
++    console.log('fileName', fileName)
++    fileName.length
++    const diffBlock = fileDiffs.find((d) => {
++        // const filenameRegex = new RegExp(/^filename.*/);
++        // const myd = d.slice(0, fileName.length);
++        @@ -2 +2,2 @@ don't include this since it is part of the file itself
++        return d.slice(0, fileName.length) == fileName && d.slice(fileName.length, fileName.length+1) == ' ';
++    });
 @@ -22,0 +23 @@ const testTsSourceFile = ts.createSourceFile(
 +// add a line to test
 diff --git a/test-diff.ts b/test-diff.ts
@@ -88,13 +101,17 @@ index 460da5e..ffd79c4 100644
 +
 +simpleGit.diff(['-U0'], linesFromGitDiff);
 `;
-const lineNums = linesFromGitDiff(null, testDiffOutput);
+const lineNums = linesFromGitDiff(null, testDiffOutput, 'spec.ts');
 console.assert(
-  lineNums[0][0] == 23 &&
-    lineNums[0][1] == 23 &&
-    lineNums[1][0] == 5 &&
-    lineNums[1][1] == 22,
+  lineNums[0][0] == 12 &&
+    lineNums[0][1] == 22 &&
+    lineNums[1][0] == 23 &&
+    lineNums[1][1] == 23,
   'linesFromGitDiff function'
+);
+console.assert(
+  lineNums.length == 2,
+  'linesFromGitDiff does not include text from file itself'
 );
 const filenames = specFilesChanged(null, testDiffOutput);
 console.assert(
