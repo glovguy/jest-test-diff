@@ -12,7 +12,7 @@ export let lineEndFromNode = function(file, descNode) {
 function printTextIfDescribe(node, context, depth) {
     if (node.expression && node.expression.kind == 71 && node.expression.escapedText == 'describe') {
         for (let i = 0; i<depth; i++) { context['doc'] = context['doc'].concat(' '); }
-        context['doc'] = context['doc'].concat(node.arguments[0].text + '\n');
+            context['doc'] = context['doc'].concat(node.arguments[0].text + '\n');
         context['tree'].push({
             text: node.arguments[0].text,
             pos: node.pos,
@@ -23,7 +23,7 @@ function printTextIfDescribe(node, context, depth) {
         printAllDescribesAtNode(node.arguments[1], context, depth+1);
     } else if (node.expression && node.expression.kind == 71 && node.expression.escapedText == 'it') {
         for (let i = 0; i<depth; i++) { context['doc'] = context['doc'].concat(' '); }
-        context['doc'] = context['doc'].concat('it ' + node.arguments[0].text + '\n');
+            context['doc'] = context['doc'].concat('it ' + node.arguments[0].text + '\n');
         context['tree'].push({
             text: 'it ' + node.arguments[0].text,
             pos: node.pos,
@@ -53,7 +53,7 @@ export function printAllDescribesFromSpecFile(specFile) {
         '_.js',
         specFile,
         ts.ScriptTarget.Latest
-    );
+        );
     let context = { tree: [], doc: '', sourceFile: specFile };
     tsSourceFile.statements.forEach((n) => {
         printAllDescribesAtNode(n, context);
