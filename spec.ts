@@ -20,7 +20,7 @@ console.assert(
     'First level parse tree'
 );
 console.assert(
-    printAllDescribesFromSpecFile(testSourceCode)['tree'][1]['text'] == 'this is a nested desc block',
+    printAllDescribesFromSpecFile(testSourceCode)['tree'][0]['children'][0]['text'] == 'this is a nested desc block',
     'Second level parse tree'
 );
 const expectedDoc = `my describe text
@@ -50,11 +50,11 @@ console.assert(
     'Line end function'
 );
 console.assert(
-    lineStartFromNode(testSourceCode, printAllDescribesFromSpecFile(testSourceCode)['tree'][1]) == 5,
+    lineStartFromNode(testSourceCode, printAllDescribesFromSpecFile(testSourceCode)['tree'][0]['children'][0]) == 5,
     'Line Start function, nested describe'
 );
 console.assert(
-    lineEndFromNode(testSourceCode, printAllDescribesFromSpecFile(testSourceCode)['tree'][1]) == 9,
+    lineEndFromNode(testSourceCode, printAllDescribesFromSpecFile(testSourceCode)['tree'][0]['children'][0]) == 9,
     'Line end function, nested describe'
 );
 
