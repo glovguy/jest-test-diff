@@ -12,6 +12,12 @@ describe('my describe text', () => {
             console.log('test here');
         });
     });
+
+    describe('second nested block', () => {
+        it('does some other thing', () => {
+            console.log('second assertion');
+        });
+    });
 });
 `;
 
@@ -23,21 +29,31 @@ console.assert(
     printAllDescribesFromSpecFile(testSourceCode)['tree'][0]['children'][0]['text'] == 'this is a nested desc block',
     'Second level parse tree'
 );
-const expectedDoc = `my describe text
-  this is a nested desc block
-    it does a thing
-`;
-console.assert(
-    printAllDescribesFromSpecFile(testSourceCode)['doc'] == expectedDoc,
-    'Formatted doc'
-);
 console.assert(
     printAllDescribesFromSpecFile(testSourceCode)['tree'][0]['lineStart'] == 3,
     'Line start included'
 );
 console.assert(
-    printAllDescribesFromSpecFile(testSourceCode)['tree'][0]['lineEnd'] == 10,
-    'Line end included'
+    printAllDescribesFromSpecFile(testSourceCode)['tree'][0]['lineEnd'] == 16,
+    'Line end included in top level tree'
+);
+const expectedDoc = `my describe text
+  this is a nested desc block
+    it does a thing
+  second nested block
+    it does some other thing
+`;
+console.assert(
+    printAllDescribesFromSpecFile(testSourceCode)['doc'] == expectedDoc,
+    'Formatted doc'
+);
+const slimDoc = `my describe text
+  second nested block
+    it does some other thing
+`;
+console.assert(
+    printAllDescribesFromSpecFile(testSourceCode, [[13, 13]])['doc'] == slimDoc,
+    'Formatted doc excluding nodes that were not changed'
 );
 
 
@@ -46,7 +62,7 @@ console.assert(
     'Line start function'
 );
 console.assert(
-    lineEndFromNode(testSourceCode, printAllDescribesFromSpecFile(testSourceCode)['tree'][0]) == 10,
+    lineEndFromNode(testSourceCode, printAllDescribesFromSpecFile(testSourceCode)['tree'][0]) == 16,
     'Line end function'
 );
 console.assert(

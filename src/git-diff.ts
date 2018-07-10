@@ -1,5 +1,5 @@
-type lineNumPair = Array<number>;
-type lineNumPairsArray = Array<lineNumPair>;
+export type lineNumPair = Array<number>;
+export type lineNumPairsArray = Array<lineNumPair>;
 
 export const specFilesChanged = function(err: null|any, diffText: string): Array<string> {
     let fileNames = [];
@@ -23,7 +23,8 @@ export const linesFromGitDiff = function(err: null|any, diffText: string, fileNa
         const match = new RegExp(/^@@ -\d+,?\d* \+(\d+),?(\d+)? @@.*/g).exec(line);
         if (match) {
             const endOfLine = match[2] ? Number(match[1])+Number(match[2])-1 : Number(match[1]);
-            lineNums.push([Number(match[1]), endOfLine]); }
-        });
+            lineNums.push([Number(match[1]), endOfLine]);
+        }
+    });
     return lineNums;
 }
