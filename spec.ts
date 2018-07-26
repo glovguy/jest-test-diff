@@ -117,7 +117,7 @@ index 460da5e..ffd79c4 100644
 +
 +simpleGit.diff(['-U0'], linesFromGitDiff);
 `;
-const lineNums = linesFromGitDiff(null, testDiffOutput, 'spec.ts');
+const lineNums = linesFromGitDiff(testDiffOutput, 'spec.ts');
 console.assert(
     lineNums[0][0] == 12 &&
     lineNums[0][1] == 22 &&
@@ -129,9 +129,15 @@ console.assert(
     lineNums.length == 2,
     'linesFromGitDiff does not include text from file itself'
 );
-const filenames = specFilesChanged(null, testDiffOutput);
+const filenames = specFilesChanged(testDiffOutput);
 console.assert(
     filenames[0] == 'spec.ts' && filenames.length == 1,
     'specFilesChanged function'
+);
+const testIgnoreRegExp = /spec\.ts/g
+const allFilesIgnored = specFilesChanged(testDiffOutput, testIgnoreRegExp);
+console.assert(
+    allFilesIgnored.length == 0,
+    'ignoreRegex passed into specFilesChanged'
 );
 console.log('All tests pass!');

@@ -1,17 +1,17 @@
 export type lineNumPair = Array<number>;
 export type lineNumPairsArray = Array<lineNumPair>;
 
-export const specFilesChanged = function(err: null|any, diffText: string): Array<string> {
+export const specFilesChanged = function(diffText: string, ignoreRegex = null): Array<string> {
     let fileNames = [];
     diffText.split('\n').forEach((line) => {
+        if (new RegExp(ignoreRegex).exec(line)) { return; }
         const match = new RegExp(/\+\+\+ b.(.*spec.*)/g).exec(line);
-        if (match) {
-            fileNames.push(match[1]); }
-        });
-    return fileNames
+        if (match) { fileNames.push(match[1]); }
+    });
+    return fileNames;
 }
 
-export const linesFromGitDiff = function(err: null|any, diffText: string, fileName: string): lineNumPairsArray {
+export const linesFromGitDiff = function(diffText: string, fileName: string): lineNumPairsArray {
     const truncatedDiffText = diffText.slice('diff --git a\/'.length);
     const fileDiffs = truncatedDiffText.split(/\ndiff --git a\//);
     const diffBlock = fileDiffs.filter((d) => {

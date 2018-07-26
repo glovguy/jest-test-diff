@@ -8,9 +8,6 @@
     "simple-git": "^1.96.0",
     "typescript": "^2.9.2"
   },
-  "devDependencies": {
-    "@types/core-js": "^2.5.0"
-  },
   "scripts": {
     "start": "tsc main.ts && node main.js",
     "test": "tsc spec.ts && node spec.js"

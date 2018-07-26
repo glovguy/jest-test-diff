@@ -100,7 +100,7 @@ export function printAllDescribesFromSpecFile(specFile: string, linesChanged = [
         '_.js',
         specFile,
         ts.ScriptTarget.Latest
-        );
+    );
     let context = { tree: [], doc: '', sourceFile: specFile, linesChanged };
     tsSourceFile.statements.forEach((n) => {
         const nodes = printAllDescribesAtNode(n, context);
