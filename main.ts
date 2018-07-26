@@ -17,6 +17,6 @@ simpleGit.diff(['-U0', comparisonBranchName], (err, gDiff) => {
         const linesChanged = linesFromGitDiff(gDiff, filename);
         const specFile = fs.readFileSync(filename, 'utf8');
         const { tree, doc } = printAllDescribesFromSpecFile(specFile, linesChanged);
-        console.log(doc);
+        if (tree.length > 0) { console.log(doc); }
     });
 });
