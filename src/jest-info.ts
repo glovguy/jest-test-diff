@@ -2,8 +2,8 @@ declare var require: any
 const ts = require("typescript");
 import { lineNumPair, lineNumPairsArray } from './git-diff';
 
-interface contextInterface { tree: Array<describeNodeTree>, doc: string, sourceFile: any, linesChanged: lineNumPairsArray };
-interface describeNodeTree {
+export interface contextInterface { tree: Array<describeNodeTree>, doc: string, sourceFile: any, linesChanged: lineNumPairsArray };
+export interface describeNodeTree {
     text: string,
     pos: number,
     end: number,

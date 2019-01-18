@@ -1,5 +1,5 @@
-import { printAllDescribesFromSpecFile, lineStartFromNode, lineEndFromNode } from './src/jest-info';
-import { linesFromGitDiff, specFilesChanged } from './src/git-diff';
+import { printAllDescribesFromSpecFile, lineStartFromNode, lineEndFromNode } from '../src/jest-info';
+import { linesFromGitDiff, specFilesChanged } from '../src/git-diff';
 
 
 // poor man's tests
