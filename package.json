@@ -1,17 +1,7 @@
 {
   "name": "jest-test-diff",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Jest test descriptions for a git diff",
-  "main": "test-diff.js",
-  "dependencies": {
-    "fs": "0.0.1-security",
-    "simple-git": "^1.96.0",
-    "typescript": "^2.9.2"
-  },
-  "scripts": {
-    "start": "tsc main.ts && node main.js",
-    "test": "tsc spec.ts && node spec.js"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/glovguy/jest-test-diff.git"
@@ -21,5 +11,19 @@
   "bugs": {
     "url": "https://github.com/glovguy/jest-test-diff/issues"
   },
-  "homepage": "https://karl.pizza"
+  "homepage": "https://karl.pizza",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "start": "npm run build && node dist/src/main.js",
+    "test": "node dist/test/spec.js"
+  },
+  "devDependencies": {
+    "typescript": "^2.9.2"
+  },
+  "dependencies": {
+    "fs": "0.0.1-security",
+    "simple-git": "^1.96.0"
+  }
 }

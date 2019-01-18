@@ -1,4 +1,4 @@
 *.js
-*.spec.ts
+local_dev/**
 node_modules/**
 .DS_Store
