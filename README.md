@@ -1,4 +1,3 @@
 # Jest-Test-Diff
 
-to run:
-```tsc test-diff.ts && node test-diff.js```
+Shows test documentation for changes made between a checked out branch and master.
