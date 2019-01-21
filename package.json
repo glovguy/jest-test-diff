@@ -1,6 +1,6 @@
 {
   "name": "jest-test-diff",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Jest test descriptions for a git diff",
   "repository": {
     "type": "git",
@@ -14,6 +14,9 @@
   "homepage": "https://karl.pizza",
   "main": "dist/src/index.js",
   "types": "dist/src.index.d.ts",
+  "bin": {
+    "diff": "node run dist/src/cli"
+  },
   "scripts": {
     "build": "tsc",
     "start": "npm run build && node dist/src/main.js",
