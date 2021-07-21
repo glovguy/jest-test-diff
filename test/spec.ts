@@ -140,4 +140,4 @@ console.assert(
     allFilesIgnored.length == 0,
     'ignoreRegex passed into specFilesChanged'
 );
-console.log('All tests pass!');
+console.log('Test suite finished.');

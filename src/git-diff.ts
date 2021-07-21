@@ -1,8 +1,9 @@
 export type lineNumPair = Array<number>;
 export type lineNumPairsArray = Array<lineNumPair>;
 
-export const specFilesChanged = function(diffText: string, ignoreRegex = null): Array<string> {
+export const specFilesChanged = function(diffText?: string, ignoreRegex: string | RegExp | null = null): Array<string> | undefined {
     let fileNames = [];
+    if (diffText === undefined) return;
     diffText.split('\n').forEach((line) => {
         if (new RegExp(ignoreRegex).exec(line)) { return; }
         const match = new RegExp(/\+\+\+ b.(.*spec.*)/g).exec(line);

@@ -1,5 +1,4 @@
-declare var require: any
-const ts = require("typescript");
+import * as ts from 'typescript';
 import { lineNumPair, lineNumPairsArray } from './git-diff';
 
 export interface contextInterface { tree: Array<describeNodeTree>, doc: string, sourceFile: any, linesChanged: lineNumPairsArray };
@@ -14,11 +13,11 @@ export interface describeNodeTree {
     isDirectlyModified: boolean
 }
 
-export let lineStartFromNode = function(file: string, descNode): number {
+export let lineStartFromNode = function(file: string, descNode: describeNodeTree): number {
     return (file.slice(0, descNode['pos']+1).split('\n') || []).length + 1;
 }
 
-export let lineEndFromNode = function(file: string, descNode): number {
+export let lineEndFromNode = function(file: string, descNode: describeNodeTree): number {
     return (file.slice(0, descNode['end']).split('\n') || []).length;
 }
 
@@ -38,41 +37,51 @@ const linePairContainsRange = function(subjectLinePair: lineNumPair, range: line
     return subjectLinePair[0] <= range[0] && subjectLinePair[1] >= range[1];
 }
 
-function printTextIfDescribe(node, context: contextInterface, depth): Array<describeNodeTree> {
+function docTreeDescribe(node: any, context: contextInterface, depth: number): Array<describeNodeTree> {
+    const lineStart = lineStartFromNode(context['sourceFile'], node);
+    const lineEnd = lineEndFromNode(context['sourceFile'], node);
+    if (context['linesChanged'].length>0 && !linePairInsideLinesChanged([lineStart, lineEnd], context['linesChanged'])) { return; }
+    for (let i=0; i<depth; i++) { context['doc'] = context['doc'].concat(' '); }
+    const text = node.arguments[0].text;
+    context['doc'] = context['doc'].concat(text + '\n');
+    const children = printAllDescribesAtNode(node.arguments[1], context, depth+1);
+    if (children === undefined || children.length === 0) { return []; }
+    return [{
+        text: node.arguments[0].text,
+        pos: node.pos,
+        end: node.end,
+        lineStart,
+        lineEnd,
+        children,
+        isAssertion: false,
+        isDirectlyModified: true
+    }];
+}
+
+function docTreeIt(node: any, context: contextInterface, depth: number): Array<describeNodeTree> {
+    const lineStart = lineStartFromNode(context['sourceFile'], node);
+    const lineEnd = lineEndFromNode(context['sourceFile'], node);
+    if (context['linesChanged'].length>0 && !linePairInsideLinesChanged([lineStart, lineEnd], context['linesChanged'])) { return; }
+    for (let i = 0; i<depth; i++) { context['doc'] = context['doc'].concat(' '); }
+    const text = node.arguments[0].text;
+    context['doc'] = context['doc'].concat(`it ${text}\n`);
+    return [{
+        text,
+        pos: node.pos,
+        end: node.end,
+        lineStart,
+        lineEnd,
+        children: [],
+        isAssertion: true,
+        isDirectlyModified: true
+    }];
+}
+
+function docTree(node: any, context: contextInterface, depth: number): Array<describeNodeTree> {
     if (node.expression && node.expression.kind == ts.SyntaxKind.Identifier && node.expression.escapedText == 'describe') {
-        const lineStart = lineStartFromNode(context['sourceFile'], node);
-        const lineEnd = lineEndFromNode(context['sourceFile'], node);
-        if (context['linesChanged'].length>0 && !linePairInsideLinesChanged([lineStart, lineEnd], context['linesChanged'])) { return; }
-        for (let i=0; i<depth; i++) { context['doc'] = context['doc'].concat(' '); }
-        const text = node.arguments[0].text;
-        context['doc'] = context['doc'].concat(text + '\n');
-        return [{
-            text: node.arguments[0].text,
-            pos: node.pos,
-            end: node.end,
-            lineStart,
-            lineEnd,
-            children: printAllDescribesAtNode(node.arguments[1], context, depth+1),
-            isAssertion: false,
-            isDirectlyModified: true
-        }];
+        return docTreeDescribe(node, context, depth);
     } else if (node.expression && node.expression.kind == ts.SyntaxKind.Identifier && node.expression.escapedText == 'it') {
-        const lineStart = lineStartFromNode(context['sourceFile'], node);
-        const lineEnd = lineEndFromNode(context['sourceFile'], node);
-        if (context['linesChanged'].length>0 && !linePairInsideLinesChanged([lineStart, lineEnd], context['linesChanged'])) { return; }
-        for (let i = 0; i<depth; i++) { context['doc'] = context['doc'].concat(' '); }
-        const text = node.arguments[0].text;
-        context['doc'] = context['doc'].concat(`it ${text}\n`);
-        return [{
-            text,
-            pos: node.pos,
-            end: node.end,
-            lineStart,
-            lineEnd,
-            children: [],
-            isAssertion: true,
-            isDirectlyModified: true
-        }];
+        return docTreeIt(node, context, depth);
     } else if (node.statements) {
         let nodes = [];
         node.statements.forEach((n) => {
@@ -86,10 +95,10 @@ function printTextIfDescribe(node, context: contextInterface, depth): Array<desc
     }
 }
 
-function printAllDescribesAtNode(node, context: contextInterface, depth = 0): Array<describeNodeTree> {
+function printAllDescribesAtNode(node: ts.Statement, context: contextInterface, depth = 0): Array<describeNodeTree> {
     let nodes = [];
     ts.forEachChild(node, (n) => {
-        const descNode = printTextIfDescribe(n, context, depth);
+        const descNode = docTree(n, context, depth);
         if (descNode) { nodes.push(...descNode); }
     });
     if (nodes && nodes.length) { return nodes; }

@@ -20,7 +20,7 @@
   "scripts": {
     "build": "tsc",
     "start": "npm run build && node dist/src/main.js",
-    "test": "node dist/test/spec.js"
+    "test": "npm run build && node dist/test/spec.js"
   },
   "dependencies": {
     "fs": "0.0.1-security",

@@ -6,8 +6,12 @@
     "declaration": true,
     "outDir": "./dist"
   },
+  "includes": [
+    "src/**/*", 
+    "tests/**/*"
+  ],
   "exclude": [
-    "node_modules",
+    "node_modules/**",
     "testData/**/*",
     "local_dev/**/*",
     "./dist/**/*"

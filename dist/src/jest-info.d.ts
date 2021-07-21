@@ -15,7 +15,7 @@ export interface describeNodeTree {
     isAssertion: boolean;
     isDirectlyModified: boolean;
 }
-export declare let lineStartFromNode: (file: string, descNode: any) => number;
-export declare let lineEndFromNode: (file: string, descNode: any) => number;
+export declare let lineStartFromNode: (file: string, descNode: describeNodeTree) => number;
+export declare let lineEndFromNode: (file: string, descNode: describeNodeTree) => number;
 export declare const linePairInsideLinesChanged: (subjectLinePair: number[], linesChanged: number[][]) => boolean;
 export declare function printAllDescribesFromSpecFile(specFile: string, linesChanged?: any[]): contextInterface;
