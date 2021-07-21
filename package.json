@@ -19,8 +19,9 @@
   },
   "scripts": {
     "build": "tsc",
-    "start": "npm run build && node dist/src/main.js",
-    "test": "npm run build && node dist/test/spec.js"
+    "start": "npm run build && node dist/src/index.js",
+    "test": "npm run build && node dist/test/spec.js",
+    "prepublish": "npm run build"
   },
   "dependencies": {
     "fs": "0.0.1-security",

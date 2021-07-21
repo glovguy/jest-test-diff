@@ -58,13 +58,13 @@ function docTreeDescribe(node: any, context: contextInterface, depth: number): A
     }];
 }
 
-function docTreeIt(node: any, context: contextInterface, depth: number): Array<describeNodeTree> {
+function docTreeAssertion(node: any, context: contextInterface, depth: number): Array<describeNodeTree> {
     const lineStart = lineStartFromNode(context['sourceFile'], node);
     const lineEnd = lineEndFromNode(context['sourceFile'], node);
     if (context['linesChanged'].length>0 && !linePairInsideLinesChanged([lineStart, lineEnd], context['linesChanged'])) { return; }
     for (let i = 0; i<depth; i++) { context['doc'] = context['doc'].concat(' '); }
     const text = node.arguments[0].text;
-    context['doc'] = context['doc'].concat(`it ${text}\n`);
+    context['doc'] = context['doc'].concat(`${node.expression.escapedText} ${text}\n`);
     return [{
         text,
         pos: node.pos,
@@ -78,10 +78,10 @@ function docTreeIt(node: any, context: contextInterface, depth: number): Array<d
 }
 
 function docTree(node: any, context: contextInterface, depth: number): Array<describeNodeTree> {
-    if (node.expression && node.expression.kind == ts.SyntaxKind.Identifier && node.expression.escapedText == 'describe') {
+    if (node.expression && node.expression.kind == ts.SyntaxKind.Identifier && node.expression.escapedText === 'describe') {
         return docTreeDescribe(node, context, depth);
-    } else if (node.expression && node.expression.kind == ts.SyntaxKind.Identifier && node.expression.escapedText == 'it') {
-        return docTreeIt(node, context, depth);
+    } else if (node.expression && node.expression.kind == ts.SyntaxKind.Identifier && (node.expression.escapedText === 'it' || node.expression.escapedText === 'test')) {
+        return docTreeAssertion(node, context, depth);
     } else if (node.statements) {
         let nodes = [];
         node.statements.forEach((n) => {
