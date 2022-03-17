@@ -25,7 +25,7 @@
   },
   "dependencies": {
     "fs": "0.0.1-security",
-    "simple-git": "^1.107.0",
+    "simple-git": "^3.3.0",
     "typescript": "^2.9.2"
   }
 }
