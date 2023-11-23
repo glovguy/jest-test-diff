@@ -1,1 +1,1 @@
-export declare function generate_diff(): void;
+export declare function print_diff(gDiff?: any): Promise<void>;

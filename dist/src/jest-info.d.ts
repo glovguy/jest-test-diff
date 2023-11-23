@@ -1,9 +1,10 @@
-import { lineNumPairsArray } from './git-diff';
+import { lineNumPair, lineNumPairsArray } from './git-diff';
 export interface contextInterface {
     tree: Array<describeNodeTree>;
     doc: string;
+    flatDoc: string;
     sourceFile: any;
-    linesChanged: lineNumPairsArray;
+    linesChanged: lineNumPairsArray | null;
 }
 export interface describeNodeTree {
     text: string;
@@ -17,5 +18,5 @@ export interface describeNodeTree {
 }
 export declare let lineStartFromNode: (file: string, descNode: describeNodeTree) => number;
 export declare let lineEndFromNode: (file: string, descNode: describeNodeTree) => number;
-export declare const linePairInsideLinesChanged: (subjectLinePair: number[], linesChanged: number[][]) => boolean;
-export declare function printAllDescribesFromSpecFile(specFile: string, linesChanged?: any[]): contextInterface;
+export declare const linePairInsideLinesChanged: (subjectLinePair: lineNumPair, linesChanged: lineNumPairsArray) => boolean;
+export declare function descriptionFromSpecFile(specFile: string, linesChanged?: any): contextInterface;

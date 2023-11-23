@@ -6,7 +6,7 @@ export const specFilesChanged = function(diffText?: string, ignoreRegex: string 
     if (diffText === undefined) return;
     diffText.split('\n').forEach((line) => {
         if (new RegExp(ignoreRegex).exec(line)) { return; }
-        const match = new RegExp(/\+\+\+ b.(.*spec.*)/g).exec(line);
+        const match = new RegExp(/\+\+\+ b.(.*[spec|test]\..s)/g).exec(line);
         if (match) { fileNames.push(match[1]); }
     });
     return fileNames;

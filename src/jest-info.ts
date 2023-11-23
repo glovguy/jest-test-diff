@@ -1,7 +1,13 @@
 import * as ts from 'typescript';
 import { lineNumPair, lineNumPairsArray } from './git-diff';
 
-export interface contextInterface { tree: Array<describeNodeTree>, doc: string, sourceFile: any, linesChanged: lineNumPairsArray };
+export interface contextInterface {
+    tree: Array<describeNodeTree>,
+    doc: string,
+    flatDoc: string,
+    sourceFile: any,
+    linesChanged: lineNumPairsArray | null,
+};
 export interface describeNodeTree {
     text: string,
     pos: number,
@@ -10,7 +16,7 @@ export interface describeNodeTree {
     lineEnd: number,
     children: Array<describeNodeTree>,
     isAssertion: boolean,
-    isDirectlyModified: boolean
+    isDirectlyModified: boolean,
 }
 
 export let lineStartFromNode = function(file: string, descNode: describeNodeTree): number {
@@ -37,14 +43,14 @@ const linePairContainsRange = function(subjectLinePair: lineNumPair, range: line
     return subjectLinePair[0] <= range[0] && subjectLinePair[1] >= range[1];
 }
 
-function docTreeDescribe(node: any, context: contextInterface, depth: number): Array<describeNodeTree> {
+function docTreeDescribe(node: any, context: contextInterface, depth: number, testContext: string): Array<describeNodeTree> {
     const lineStart = lineStartFromNode(context['sourceFile'], node);
     const lineEnd = lineEndFromNode(context['sourceFile'], node);
-    if (context['linesChanged'].length>0 && !linePairInsideLinesChanged([lineStart, lineEnd], context['linesChanged'])) { return; }
+    if (context['linesChanged'] !== null && !linePairInsideLinesChanged([lineStart, lineEnd], context['linesChanged'])) { return; }
     for (let i=0; i<depth; i++) { context['doc'] = context['doc'].concat(' '); }
     const text = node.arguments[0].text;
     context['doc'] = context['doc'].concat(text + '\n');
-    const children = printAllDescribesAtNode(node.arguments[1], context, depth+1);
+    const children = descriptionFromNode(node.arguments[1], context, depth+1, `${testContext}${text}\n`);
     if (children === undefined || children.length === 0) { return []; }
     return [{
         text: node.arguments[0].text,
@@ -58,13 +64,14 @@ function docTreeDescribe(node: any, context: contextInterface, depth: number): A
     }];
 }
 
-function docTreeAssertion(node: any, context: contextInterface, depth: number): Array<describeNodeTree> {
+function docTreeAssertion(node: any, context: contextInterface, depth: number, testContext: string): Array<describeNodeTree> {
     const lineStart = lineStartFromNode(context['sourceFile'], node);
     const lineEnd = lineEndFromNode(context['sourceFile'], node);
-    if (context['linesChanged'].length>0 && !linePairInsideLinesChanged([lineStart, lineEnd], context['linesChanged'])) { return; }
+    if (context['linesChanged'] !== null && !linePairInsideLinesChanged([lineStart, lineEnd], context['linesChanged'])) { return; }
     for (let i = 0; i<depth; i++) { context['doc'] = context['doc'].concat(' '); }
     const text = node.arguments[0].text;
     context['doc'] = context['doc'].concat(`${node.expression.escapedText} ${text}\n`);
+    context['flatDoc'] = `${context['flatDoc']}\n${testContext}${node.expression.escapedText} ${text}\n`;
     return [{
         text,
         pos: node.pos,
@@ -77,42 +84,46 @@ function docTreeAssertion(node: any, context: contextInterface, depth: number): 
     }];
 }
 
-function docTree(node: any, context: contextInterface, depth: number): Array<describeNodeTree> {
+function docTree(node: any, context: contextInterface, depth: number, testContext: string): Array<describeNodeTree> {
     if (node.expression && node.expression.kind == ts.SyntaxKind.Identifier && node.expression.escapedText === 'describe') {
-        return docTreeDescribe(node, context, depth);
+        return docTreeDescribe(node, context, depth, testContext);
     } else if (node.expression && node.expression.kind == ts.SyntaxKind.Identifier && (node.expression.escapedText === 'it' || node.expression.escapedText === 'test')) {
-        return docTreeAssertion(node, context, depth);
+        return docTreeAssertion(node, context, depth, testContext);
     } else if (node.statements) {
         let nodes = [];
         node.statements.forEach((n) => {
-            const nn = printAllDescribesAtNode(n, context, depth+1)
+            const nn = descriptionFromNode(n, context, depth+1, testContext);
             if (nn && nn.length>0) { return nodes.push(...nn); }
         });
         if (nodes.length) { return nodes; }
     } else if (node.body) {
-        const nn = printAllDescribesAtNode(node.body, context, depth+1);
+        const nn = descriptionFromNode(node.body, context, depth+1, testContext);
         if (nn && nn.length) { return nn; }
     }
 }
 
-function printAllDescribesAtNode(node: ts.Statement, context: contextInterface, depth = 0): Array<describeNodeTree> {
+function descriptionFromNode(node: ts.Statement, context: contextInterface, depth = 0, testContext = ''): Array<describeNodeTree> {
     let nodes = [];
     ts.forEachChild(node, (n) => {
-        const descNode = docTree(n, context, depth);
+        const descNode = docTree(n, context, depth, testContext);
         if (descNode) { nodes.push(...descNode); }
     });
     if (nodes && nodes.length) { return nodes; }
 }
 
-export function printAllDescribesFromSpecFile(specFile: string, linesChanged = []): contextInterface {
+export function descriptionFromSpecFile(specFile: string, linesChanged = null): contextInterface {
+    // linesChanged is an array of line number pairs, e.g. [[1, 3], [5, 5]]
+    // an empty array means no lines changed
+    // a null value means all lines changed
+    let context = { tree: [], doc: '', sourceFile: specFile, linesChanged, flatDoc: '' };
+    if (linesChanged !== null && !linesChanged.length) { return context; }
     const tsSourceFile = ts.createSourceFile(
         '_.js',
         specFile,
         ts.ScriptTarget.Latest
     );
-    let context = { tree: [], doc: '', sourceFile: specFile, linesChanged };
     tsSourceFile.statements.forEach((n) => {
-        const nodes = printAllDescribesAtNode(n, context);
+        const nodes = descriptionFromNode(n, context);
         if (nodes) { context['tree'].push(...nodes); }
     });
     return context;

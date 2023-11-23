@@ -1,5 +1,5 @@
 #!/usr/bin/env node
 
-import { generate_diff } from './index';
+import { print_diff } from './index';
 
-generate_diff();
+print_diff();

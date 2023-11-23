@@ -1,4 +1,4 @@
-import { printAllDescribesFromSpecFile, lineStartFromNode, lineEndFromNode } from '../src/jest-info';
+import { descriptionFromSpecFile, lineStartFromNode, lineEndFromNode } from '../src/jest-info';
 import { linesFromGitDiff, specFilesChanged } from '../src/git-diff';
 
 
@@ -17,24 +17,29 @@ describe('my describe text', () => {
         it('does some other thing', () => {
             console.log('second assertion');
         });
+        describe('when another thing', () => {
+            it('does some third thing', () => {
+                console.log('third assertion');
+            });
+        });
     });
 });
 `;
 
 console.assert(
-    printAllDescribesFromSpecFile(testSourceCode)['tree'][0]['text'] == 'my describe text',
+    descriptionFromSpecFile(testSourceCode)['tree'][0]['text'] == 'my describe text',
     'First level parse tree'
 );
 console.assert(
-    printAllDescribesFromSpecFile(testSourceCode)['tree'][0]['children'][0]['text'] == 'this is a nested desc block',
+    descriptionFromSpecFile(testSourceCode)['tree'][0]['children'][0]['text'] == 'this is a nested desc block',
     'Second level parse tree'
 );
 console.assert(
-    printAllDescribesFromSpecFile(testSourceCode)['tree'][0]['lineStart'] == 3,
+    descriptionFromSpecFile(testSourceCode)['tree'][0]['lineStart'] == 3,
     'Line start included'
 );
 console.assert(
-    printAllDescribesFromSpecFile(testSourceCode)['tree'][0]['lineEnd'] == 16,
+    descriptionFromSpecFile(testSourceCode)['tree'][0]['lineEnd'] == 21,
     'Line end included in top level tree'
 );
 const expectedDoc = `my describe text
@@ -42,9 +47,11 @@ const expectedDoc = `my describe text
     it does a thing
   second nested block
     it does some other thing
+    when another thing
+      it does some third thing
 `;
 console.assert(
-    printAllDescribesFromSpecFile(testSourceCode)['doc'] == expectedDoc,
+    descriptionFromSpecFile(testSourceCode)['doc'] == expectedDoc,
     'Formatted doc'
 );
 const slimDoc = `my describe text
@@ -52,26 +59,44 @@ const slimDoc = `my describe text
     it does some other thing
 `;
 console.assert(
-    printAllDescribesFromSpecFile(testSourceCode, [[13, 13]])['doc'] == slimDoc,
+    descriptionFromSpecFile(testSourceCode, [[13, 13]])['doc'] == slimDoc,
     'Formatted doc excluding nodes that were not changed'
 );
 
 
 console.assert(
-    lineStartFromNode(testSourceCode, printAllDescribesFromSpecFile(testSourceCode)['tree'][0]) == 3,
+    lineStartFromNode(testSourceCode, descriptionFromSpecFile(testSourceCode)['tree'][0]) == 3,
     'Line start function'
 );
 console.assert(
-    lineEndFromNode(testSourceCode, printAllDescribesFromSpecFile(testSourceCode)['tree'][0]) == 16,
+    lineEndFromNode(testSourceCode, descriptionFromSpecFile(testSourceCode)['tree'][0]) == 21,
     'Line end function'
 );
 console.assert(
-    lineStartFromNode(testSourceCode, printAllDescribesFromSpecFile(testSourceCode)['tree'][0]['children'][0]) == 5,
+    lineStartFromNode(testSourceCode, descriptionFromSpecFile(testSourceCode)['tree'][0]['children'][0]) == 5,
     'Line Start function, nested describe'
 );
 console.assert(
-    lineEndFromNode(testSourceCode, printAllDescribesFromSpecFile(testSourceCode)['tree'][0]['children'][0]) == 9,
+    lineEndFromNode(testSourceCode, descriptionFromSpecFile(testSourceCode)['tree'][0]['children'][0]) == 9,
     'Line end function, nested describe'
+);
+const expectedFlatDoc = `
+my describe text
+this is a nested desc block
+it does a thing
+
+my describe text
+second nested block
+it does some other thing
+
+my describe text
+second nested block
+when another thing
+it does some third thing
+`;
+console.assert(
+    descriptionFromSpecFile(testSourceCode)['flatDoc'] == expectedFlatDoc,
+    'formatted flatDoc'
 );
 
 const testDiffOutput = `diff --git a/spec.ts b/spec.ts
