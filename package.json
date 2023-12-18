@@ -24,8 +24,7 @@
     "prepublish": "npm run build"
   },
   "dependencies": {
-    "fs": "0.0.1-security",
-    "simple-git": "^1.107.0",
+    "command-line-args": "^5.2.1",
     "typescript": "^5.2.2"
   },
   "devDependencies": {
