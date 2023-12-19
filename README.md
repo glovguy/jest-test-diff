@@ -18,7 +18,7 @@ For example: `jest-test-diff test/mySpecFile.test.js`
 
 Pipe a git diff in via stdin it will print the diff related to only the lines that were changed.
 
-For example: `git diff | jest-test-diff`
+For example: `git diff origin/main | jest-test-diff`
 
 Available flags:
 `--help`      prints the help text
