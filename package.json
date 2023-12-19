@@ -1,6 +1,6 @@
 {
   "name": "jest-test-diff",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "Jest test descriptions for a git diff",
   "repository": {
     "type": "git",
@@ -25,7 +25,7 @@
   },
   "dependencies": {
     "command-line-args": "^5.2.1",
-    "typescript": "^5.2.2"
+    "typescript": "^5.3.3"
   },
   "devDependencies": {
     "@types/node": "^20.9.2"
