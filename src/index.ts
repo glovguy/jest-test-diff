@@ -10,7 +10,7 @@ export async function print_diff(gDiff = null, ignoreRegex = /\+\+\+ b.(.*[spec|
     print_diff_from_files(files);
 }
 
-function print_diff_from_files(files: Array<string>, gDiff: string | undefined = undefined) {
+export function print_diff_from_files(files: Array<string>, gDiff: string | undefined = undefined) {
     if (files === undefined || !files.length) { return console.error('No test files changes'); }
     files.forEach((filename) => {
         const linesChanged = (gDiff) ? linesFromGitDiff(gDiff, filename) : null;
