@@ -32,7 +32,7 @@ Available flags:
 `);
 } else if (options['src'] !== undefined) {
     print_diff_from_files(options['src'])
-} else if (options['src'] === undefined || options['src'].length === 0) {
+} else if (!process.stdin.isTTY) {
     var stdin = process.openStdin();
 
     var diffData = "";
