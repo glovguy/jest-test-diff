@@ -9,7 +9,6 @@ const optionDefinitions = [
     // { name: 'ignore', type: String, alias: 'i' },
 ];
 const options = commandLineArgs(optionDefinitions);
-// console.log("options: ", options);
 
 if (options['help'] !== undefined) {
     console.log(`jest-test-diff
