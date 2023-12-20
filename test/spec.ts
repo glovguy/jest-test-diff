@@ -156,10 +156,10 @@ console.assert(
 );
 const filenames = specFilesChanged(testDiffOutput);
 console.assert(
-    filenames[0] == 'spec.ts' && filenames.length == 1,
+    filenames[0] == 'spec.ts' && filenames[1] == 'test-diff.ts' && filenames.length == 2,
     'specFilesChanged function'
 );
-const testIgnoreRegExp = /spec\.ts/g
+const testIgnoreRegExp = ['spec.','test-diff.ts'];
 const allFilesIgnored = specFilesChanged(testDiffOutput, testIgnoreRegExp);
 console.assert(
     allFilesIgnored.length == 0,

@@ -1,13 +1,14 @@
 export type lineNumPair = Array<number>;
 export type lineNumPairsArray = Array<lineNumPair>;
 
-export const specFilesChanged = function(diffText?: string, ignoreRegex: string | RegExp | null = null): Array<string> | undefined {
+export const specFilesChanged = function(diffText?: string, ingoreSymbols: string[] = []): Array<string> | undefined {
     let fileNames = [];
     if (diffText === undefined) return;
     diffText.split('\n').forEach((line) => {
-        if (new RegExp(ignoreRegex).exec(line)) { return; }
-        const match = new RegExp(/\+\+\+ b.(.*[spec|test]\..s)/g).exec(line);
-        if (match) { fileNames.push(match[1]); }
+        const match = new RegExp(/\+\+\+ b.(.*\.[t|j]s)/g).exec(line);
+        if (!match) { return; }
+        if (ingoreSymbols.some(ign => line.includes(ign))) { return; }
+        fileNames.push(match[1]);
     });
     return fileNames;
 }
