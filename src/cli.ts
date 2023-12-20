@@ -10,7 +10,7 @@ const optionDefinitions = [
 ];
 const options = commandLineArgs(optionDefinitions);
 
-if (options['help'] !== undefined) {
+if (options['help']) {
     console.log(`jest-test-diff
 
 Provide a list of test files it will print the test descriptions composed for human readability.
@@ -49,4 +49,6 @@ Available flags:
     stdin.on('end', function() {
         print_diff(diffData, options['ignore']);
     });
+} else {
+    console.log("No input provided. Run `jest-test-diff --help` for help text.");
 }
