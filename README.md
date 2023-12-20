@@ -20,5 +20,11 @@ Pipe a git diff in via stdin it will print the diff related to only the lines th
 
 For example: `git diff origin/main | jest-test-diff`
 
+If you want to ignore some files in the git diff, use the `--ignore` flag. Provide substrings, and if a filename in the git diff matches any of those substrings it will be skipped.
+(This flag is ignored when passing filenames.)
+
+For example: `git diff origin/main | jest-test-diff --ignore snap`
+
 Available flags:
-`--help`      prints the help text
+`--help`            prints the help text
+`--ignore  -i`      Ignore files in a git diff if their filenames contain any of the provided strings (multiple strings are accepted)

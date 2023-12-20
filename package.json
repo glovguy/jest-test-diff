@@ -1,6 +1,6 @@
 {
   "name": "jest-test-diff",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "description": "Jest test descriptions for a git diff",
   "repository": {
     "type": "git",
