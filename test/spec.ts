@@ -140,7 +140,20 @@ index 460da5e..ffd79c4 100644
 +    return lineNums;
 +}
 +
-+simpleGit.diff(['-U0'], linesFromGitDiff);
+simpleGit.diff(['-U0'], linesFromGitDiff);
+
+diff --git a/package-lock.json b/package-lock.json
+index fb4cf55..15e2eba 100644
+--- a/package-lock.json
++++ b/package-lock.json
+@@ -1,6 +1,6 @@
+ {
+   "name": "jest-test-diff",
+-  "version": "2.0.2",
++  "version": "2.0.3",
+   "lockfileVersion": 2,
+   "requires": true,
+   "packages": {
 `;
 const lineNums = linesFromGitDiff(testDiffOutput, 'spec.ts');
 console.assert(
@@ -159,6 +172,10 @@ console.assert(
     filenames[0] == 'spec.ts' && filenames[1] == 'test-diff.ts' && filenames.length == 2,
     'specFilesChanged function'
 );
+console.assert(
+    filenames.every(filename => !filename.includes('package')),
+    'only JS and TS files are read'
+)
 const testIgnoreRegExp = ['spec.','test-diff.ts'];
 const allFilesIgnored = specFilesChanged(testDiffOutput, testIgnoreRegExp);
 console.assert(

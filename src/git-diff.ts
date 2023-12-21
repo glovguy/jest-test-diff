@@ -5,7 +5,7 @@ export const specFilesChanged = function(diffText?: string, ingoreSymbols: strin
     let fileNames = [];
     if (diffText === undefined) return;
     diffText.split('\n').forEach((line) => {
-        const match = new RegExp(/\+\+\+ b.(.*\.[t|j]s)/g).exec(line);
+        const match = new RegExp(/\+\+\+ b.(.*\.[t|j]s)$/).exec(line);
         if (!match) { return; }
         if (ingoreSymbols.some(ign => line.includes(ign))) { return; }
         fileNames.push(match[1]);

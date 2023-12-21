@@ -1,0 +1,83 @@
+diff --git a/test/spec.ts b/test/spec.ts
+index 2a8e06b..2ab1d1a 100644
+--- a/test/spec.ts
++++ b/test/spec.ts
+@@ -12 +12,11 @@ export const specFilesChanged = function(err, diffText) {
+-export const linesFromGitDiff = function(err, diffText) {
++//@@ -2 +2,2 @@ don't include this since it is part of the file itself
++export const linesFromGitDiff = function(err, diffText, fileName) {
++    const fileDiffs = diffText.split('diff --git a/');
++    console.log('fileName', fileName)
++    fileName.length
++    const diffBlock = fileDiffs.find((d) => {
++        // const filenameRegex = new RegExp(/^filename.*/);
++        // const myd = d.slice(0, fileName.length);
++        @@ -2 +2,2 @@ don't include this since it is part of the file itself
++        return d.slice(0, fileName.length) == fileName && d.slice(fileName.length, fileName.length+1) == ' ';
++    });
+@@ -22,0 +23 @@ const testTsSourceFile = ts.createSourceFile(
++// add a line to test
+diff --git a/src/git-diff.ts b/src/git-diff.ts
+index 460da5e..ffd79c4 100644
+--- a/src/git-diff.ts
++++ b/src/git-diff.ts
+@@ -4,0 +5,18 @@ export const fs = require("fs");
++const simpleGit = require('simple-git')();
++
++
++const linesFromGitDiff = function(err, diffText) {
++    console.log(diffText);
++    const lines = diffText.split('\n');
++    let lineNums = [];
++    lines.forEach((line) => {
++        const match = new RegExp(/.*@@ -\d+,\d+ \+(\d+),?(\d+)? @@.*/g).exec(line);
++        if (match) {
++            const endOfLine = match[2] ? Number(match[1])+Number(match[2])-1 : Number(match[1]);
++            lineNums.push([Number(match[1]), endOfLine]); }
++    });
++    console.log(lineNums);
++    return lineNums;
++}
++
+simpleGit.diff(['-U0'], linesFromGitDiff);
+
+diff --git a/package-lock.json b/package-lock.json
+index fb4cf55..15e2eba 100644
+--- a/package-lock.json
++++ b/package-lock.json
+@@ -1,6 +1,6 @@
+ {
+   "name": "jest-test-diff",
+-  "version": "2.0.2",
++  "version": "2.0.3",
+   "lockfileVersion": 2,
+   "requires": true,
+   "packages": {
+
+diff --git a/test/mytestFile.js b/test/mytestFile.js
+index 2a8e06b..2ab1d1a 100644
+--- a/test/mytestFile.js
++++ b/test/mytestFile.js
+@@ -12 +12,11 @@ export const specFilesChanged = function(err, diffText) {
+-export const linesFromGitDiff = function(err, diffText) {
++//@@ -2 +2,2 @@ don't include this since it is part of the file itself
++
++describe('my describe text', () => {
++
++    describe('this is a nested desc block', () => {
++        it('does a thing', () => {
++            console.log('test here');
++        });
++    });
++
++    describe('second nested block', () => {
++        it('does some other thing', () => {
++            console.log('second assertion');
++        });
++        describe('when another thing', () => {
++            it('does some third thing', () => {
++                console.log('third assertion');
++            });
++        });
++    });
++});
