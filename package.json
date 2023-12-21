@@ -1,6 +1,6 @@
 {
   "name": "jest-test-diff",
-  "version": "2.1.3",
+  "version": "2.1.4",
   "description": "Jest test descriptions for a git diff",
   "repository": {
     "type": "git",
@@ -11,7 +11,7 @@
   "bugs": {
     "url": "https://github.com/glovguy/jest-test-diff/issues"
   },
-  "homepage": "https://karl.pizza",
+  "homepage": "https://github.com/glovguy/jest-test-diff",
   "main": "dist/src/index.js",
   "types": "dist/src.index.d.ts",
   "bin": {

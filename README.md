@@ -30,8 +30,8 @@ If you want to ignore some files in the git diff, use the `--ignore` flag. Provi
 For example: `git diff origin/main | jest-test-diff --ignore snap`
 
 ### Available flags
-| flag  | description |
-| ------------- | ------------- |
-| `--help`  | prints the help text  |
-| `--flat    -l`  | Prints test cases as flat series of steps  |
-| `--ignore  -i`  | Ignore files in a git diff if their filenames contain any of the provided strings (multiple strings are accepted) |
+| flag  | short | description |
+| ---------- | ----- | ------------- |
+| `--help` | `-h` | prints the help text  |
+| `--flat` | `-l`  | Prints test cases as flat series of steps  |
+| `--ignore` | `-i`  | Ignore files in a git diff if their filenames contain any of the provided strings (multiple strings are accepted) |
